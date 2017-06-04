@@ -1,0 +1,19 @@
+#!/usr/bin/env python2
+"""
+Generate pf rules from tahoe config.
+
+:note: If Tahoe-LAFS upgrades to Pyhon3, 2to3 should be able
+       to take care of this script.
+
+:author: tpltnt <tpltnt.github@dropcut.net>
+"""
+import argparse
+import ConfigParser
+
+parser = argparse.ArgumentParser()
+parser.add_argument("config", type=str, help="path to tahoe.cfg")
+args = parser.parse_args()
+
+
+config = ConfigParser.RawConfigParser()
+config.read(args.config)
