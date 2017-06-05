@@ -9,11 +9,23 @@ Generate pf rules from tahoe config.
 """
 import argparse
 import ConfigParser
+import socket
 
+# set up CLI handling
 parser = argparse.ArgumentParser()
 parser.add_argument("config", type=str, help="path to tahoe.cfg")
 args = parser.parse_args()
 
-
+# get the raw data from the condif file
 config = ConfigParser.RawConfigParser()
 config.read(args.config)
+proto, fqdn, port = config.get('node', 'tub.location').split(':')
+
+# determine local IP with a hack
+s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+s.connect((fqdn, 80))
+localip = s.getsockname()[0]
+
+# print pf rule
+print "# port redirection to tahoe node"
+print "rdr pass on $ext_if inet proto {} to port {} -> {} port {}".format(proto, port, localip, port)
